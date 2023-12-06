@@ -1,19 +1,29 @@
 package main
 
 import (
-	"io"
-	"log"
-	"net/http"
+	"fmt"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 func main() {
-	// Hello world, the web server
+  app := fiber.New()
 
-	helloHandler := func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, "Hello, world!\n")
-	}
+  v1 := app.Group("/api/v1")
+  {
+    hello := v1.Group("/hello")
+    {
+      hello.Get("", func(c *fiber.Ctx) error {
+        return c.SendString("Hello")
+      })
 
-	http.HandleFunc("/hello", helloHandler)
-	log.Println("Listing for requests at http://localhost:8000/hello")
-	log.Fatal(http.ListenAndServe(":8000", nil))
+      hello.Get(":id", func(c *fiber.Ctx) error {
+        msg := fmt.Sprintf("Hello ID: %s", c.Params("id"))
+        return c.SendString(msg)
+      })
+    }
+  }
+
+  // Listen on PORT 8000
+  app.Listen(":8000")
 }
