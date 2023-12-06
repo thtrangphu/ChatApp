@@ -1,0 +1,65 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is a sample server. You can visit the GitHub repository at https://github.com/thtrangphu/ChatApp",
+        "title": "Go + Fiber Chat app API",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://opensource.org/licenses/MIT"
+        },
+        "version": "0.1"
+    },
+    "host": "localhost:8000",
+    "basePath": "/api/v1",
+    "paths": {
+        "/api/v1/hello": {
+            "get": {
+                "produces": [
+                    "text/plain"
+                ],
+                "summary": "Get hello in response",
+                "operationId": "get-hello",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/hello/{id}": {
+            "get": {
+                "produces": [
+                    "text/plain"
+                ],
+                "summary": "Get hello in response with ID",
+                "operationId": "get-hello-id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "random ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

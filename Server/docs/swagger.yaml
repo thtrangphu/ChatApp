@@ -1,0 +1,44 @@
+basePath: /api/v1
+host: localhost:8000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: This is a sample server. You can visit the GitHub repository at https://github.com/thtrangphu/ChatApp
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Go + Fiber Chat app API
+  version: "0.1"
+paths:
+  /api/v1/hello:
+    get:
+      operationId: get-hello
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get hello in response
+  /api/v1/hello/{id}:
+    get:
+      operationId: get-hello-id
+      parameters:
+      - description: random ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+      summary: Get hello in response with ID
+swagger: "2.0"
