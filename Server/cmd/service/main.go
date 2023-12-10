@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/swagger"
 	_ "github.com/mekanican/chat-backend/docs"
 	"github.com/mekanican/chat-backend/internal/config"
@@ -50,6 +51,10 @@ func main() {
 	config.Loader(".env")
 	app := fiber.New()
 
+	app.Use(encryptcookie.New(encryptcookie.Config{
+		Key: config.GetString("SECRET_KEY"),
+	}))
+
 	// Route for swagger
 	app.Get("/swagger/*", swagger.HandlerDefault)
 
@@ -66,6 +71,8 @@ func main() {
 	{
 		auth.Route("/", route.AuthRoute)
 	}
+
+	app.Route("/", route.IndexRoute)
 
 	// Listen on PORT 8000
 	app.Listen(":8000")

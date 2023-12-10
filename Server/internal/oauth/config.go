@@ -4,12 +4,17 @@ import (
 	"context"
 	"crypto/rand"
 	"encoding/base64"
-	"io/ioutil"
+	"encoding/json"
 
 	"github.com/mekanican/chat-backend/internal/config"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
+
+type GoogleResponse struct {
+	Id    string `json:"id"`
+	Email string `json:"email"`
+}
 
 var googleOAuthConfig *oauth2.Config = nil
 
@@ -41,11 +46,11 @@ func GetAuthCodeURL(state string) string {
 }
 
 // Return email of user
-func HandleCallback(code string) (string, error) {
+func HandleCallback(code string) (*GoogleResponse, error) {
 	setConfig()
 	token, err := googleOAuthConfig.Exchange(context.Background(), code)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	oauthGoogleUrlAPI := "https://www.googleapis.com/oauth2/v2/userinfo?access_token="
@@ -53,15 +58,16 @@ func HandleCallback(code string) (string, error) {
 	response, err := client.Get(oauthGoogleUrlAPI + token.AccessToken)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	defer response.Body.Close()
-	contents, err := ioutil.ReadAll(response.Body)
+	contents := new(GoogleResponse)
+	err = json.NewDecoder(response.Body).Decode(&contents)
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(contents), nil
+	return contents, nil
 }

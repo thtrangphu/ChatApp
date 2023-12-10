@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/mekanican/chat-backend/internal/oauth"
+	"github.com/mekanican/chat-backend/internal/utils"
 )
 
 // @Summary Redirect client to google signin
@@ -46,7 +47,17 @@ func Callback(c *fiber.Ctx) error {
 	if err != nil {
 		return c.SendStatus(502)
 	}
-	return c.SendString(result)
+
+	// response, err := json.Marshal(&result)
+	// if err != nil {
+	// 	return c.SendStatus(502)
+	// }
+
+	err = utils.SetID(c, result.Id)
+	if err != nil {
+		return c.SendStatus(502)
+	}
+	return c.Redirect("/")
 }
 
 func AuthRoute(router fiber.Router) {
