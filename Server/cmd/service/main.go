@@ -6,26 +6,28 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/swagger"
 	_ "github.com/mekanican/chat-backend/docs"
+	"github.com/mekanican/chat-backend/internal/config"
+	"github.com/mekanican/chat-backend/internal/route"
 )
 
-//	@Summary	Get hello in response
-//	@ID			get-hello
-//	@Produce	plain
-//	@Success	200	{string}	hello
-//	@Router		/api/v1/hello [get]
-func getHello(c*fiber.Ctx) error {
-  return c.SendString("Hello")
+// @Summary	Get hello in response
+// @ID			get-hello
+// @Produce	plain
+// @Success	200	{string}	hello
+// @Router		/api/v1/hello [get]
+func getHello(c *fiber.Ctx) error {
+	return c.SendString("Hello")
 }
 
-//	@Summary	Get hello in response with ID
-//	@ID			get-hello-id
-//	@Param		id	path	string	true	"random ID"
-//	@Produce	plain
-//	@Success	200	{string}	hello
-//	@Router		/api/v1/hello/{id} [get]
+// @Summary	Get hello in response with ID
+// @ID			get-hello-id
+// @Param		id	path	string	true	"random ID"
+// @Produce	plain
+// @Success	200	{string}	hello
+// @Router		/api/v1/hello/{id} [get]
 func getHelloId(c *fiber.Ctx) error {
-  msg := fmt.Sprintf("Hello ID: %s", c.Params("id"))
-  return c.SendString(msg)
+	msg := fmt.Sprintf("Hello ID: %s", c.Params("id"))
+	return c.SendString(msg)
 }
 
 //	@title			Go + Fiber Chat app API
@@ -45,20 +47,26 @@ func getHelloId(c *fiber.Ctx) error {
 //	@query.collection.format	multi
 
 func main() {
-  app := fiber.New()
+	config.Loader(".env")
+	app := fiber.New()
 
-  // Route for swagger
-  app.Get("/swagger/*", swagger.HandlerDefault)
+	// Route for swagger
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
-  v1 := app.Group("/api/v1")
-  {
-    hello := v1.Group("/hello")
-    {
-      hello.Get("", getHello)
-      hello.Get(":id", getHelloId)
-    }
-  }
+	v1 := app.Group("/api/v1")
+	{
+		hello := v1.Group("/hello")
+		{
+			hello.Get("", getHello)
+			hello.Get(":id", getHelloId)
+		}
+	}
 
-  // Listen on PORT 8000
-  app.Listen(":8000")
+	auth := app.Group("/auth")
+	{
+		auth.Route("/", route.AuthRoute)
+	}
+
+	// Listen on PORT 8000
+	app.Listen(":8000")
 }
