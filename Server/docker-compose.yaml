@@ -1,0 +1,18 @@
+version: "3"
+services: 
+  centrifugal:
+    image: centrifugo/centrifugo:latest
+    command: centrifugo -c config.json --engine=redis --redis_address=redis:6379
+    ports: 
+    - "9000:8000"
+    volumes: 
+    - "./message-server:/centrifugo"
+    ulimits:
+      nproc: 65536
+      nofile:
+        soft: 65536
+        hard: 65536
+  redis:
+    image: redis
+    ports: 
+    - "6379"
