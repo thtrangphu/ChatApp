@@ -1,9 +1,14 @@
 package controller
 
 import (
+	"errors"
+	"strconv"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/mekanican/chat-backend/internal/database"
 	"github.com/mekanican/chat-backend/internal/model"
+	"github.com/mekanican/chat-backend/internal/utils"
+	"gorm.io/gorm"
 )
 
 func GetAllUser(c *fiber.Ctx) error {
@@ -13,9 +18,16 @@ func GetAllUser(c *fiber.Ctx) error {
 }
 
 func GetUser(c *fiber.Ctx) error {
-	id := c.Params("id")
+	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
+	if err != nil {
+		return utils.ResponseError(c, "Invalid ID")
+	}
+
 	var userInfo model.User
-	database.DB.Find(&userInfo, id)
+	if err := database.DB.First(&userInfo, uint(id)).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return utils.ResponseError(c, "Invalid User")
+	}
+	// database.DB.Find(&userInfo, id)
 	return c.JSON(userInfo)
 }
 

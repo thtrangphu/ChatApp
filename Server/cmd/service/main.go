@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/swagger"
 	_ "github.com/mekanican/chat-backend/docs"
 	"github.com/mekanican/chat-backend/internal/config"
+	"github.com/mekanican/chat-backend/internal/database"
 	"github.com/mekanican/chat-backend/internal/route"
 )
 
@@ -49,6 +50,7 @@ func getHelloId(c *fiber.Ctx) error {
 
 func main() {
 	config.Loader(".env")
+	database.InitializeDatabase()
 	app := fiber.New()
 
 	app.Use(encryptcookie.New(encryptcookie.Config{
@@ -64,6 +66,10 @@ func main() {
 		{
 			hello.Get("", getHello)
 			hello.Get(":id", getHelloId)
+		}
+		user := v1.Group("/user")
+		{
+			user.Route("/", route.UserRoute)
 		}
 	}
 
