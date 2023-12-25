@@ -34,17 +34,43 @@ func GetUser(c *fiber.Ctx) error {
 func CreateUser(c *fiber.Ctx) error {
 	var userInfo model.User
 	if err := c.BodyParser(&userInfo); err != nil {
-		return c.Status(500).Send([]byte("Failed"))
+		return utils.ResponseError(c, "Invalid body "+err.Error())
 	}
 
 	database.DB.Create(&userInfo)
 	return c.JSON(userInfo)
 }
 
+func UpdateUser(c *fiber.Ctx) error {
+	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
+	if err != nil {
+		return utils.ResponseError(c, "Invalid ID")
+	}
+
+	// var userInfo model.User
+
+	var info map[string]interface{}
+
+	if err := c.BodyParser(&info); err != nil {
+		return utils.ResponseError(c, "Invalid body "+err.Error())
+	}
+
+	// info["ID"] = uint(id)
+	if err := database.DB.Model(&model.User{}).Where("id = ?", uint(id)).Updates(&info).Error; err != nil {
+		return utils.ResponseError(c, "Invalid body "+err.Error())
+	}
+	return c.JSON(info)
+}
+
 func DeleteUser(c *fiber.Ctx) error {
-	id := c.Params("id")
+	id, err := strconv.ParseUint(c.Params("id"), 10, 32)
+	if err != nil {
+		return utils.ResponseError(c, "Invalid ID")
+	}
 	var userInfo model.User
-	database.DB.First(&userInfo, id)
+	if err := database.DB.First(&userInfo, uint(id)).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return utils.ResponseError(c, "Invalid User")
+	}
 	database.DB.Delete(&userInfo)
 	return c.JSON(userInfo)
 }
