@@ -58,41 +58,78 @@ const DashboardLayout = () => {
   const { onToggleMode } = useSettings();
   return (
     <>
-      <Box
-        p={2}
-        sx={{
-          backgroundColor: theme.palette.background.paper,
-          boxShadow: "0px 0px 2px rgba(0,0,0,0.25)",
-          height: "100vh",
-          width: 100,
-        }}
-      >
-        <Stack
-          direction="column"
-          alignItems="center"
-          justifyContent="space-between"
-          sx={{ height: "100%" }}
-          spacing={3}
+      <Stack direction="row" sx={{ height: "100%" }}>
+        <Box
+          p={2}
+          sx={{
+            backgroundColor: theme.palette.background.paper,
+            boxShadow: "0px 0px 2px rgba(0,0,0,0.25)",
+            height: "100vh",
+            width: 100,
+          }}
         >
-          <Stack alignItems={"center"} spacing={4}>
-            <Box
-              sx={{
-                backgroundColor: theme.palette.primary.main,
-                height: 64,
-                width: 64,
-                borderRadius: 1.5,
-              }}
-            >
-              <img src={Logo} alt={"Chat App Logo"} />
-            </Box>
-            <Stack
-              sx={{ width: "max-content" }}
-              direction="column"
-              alignItems="center"
-              spacing={3}
-            >
-              {Nav_Buttons.map((el) =>
-                el.index === selected ? (
+          <Stack
+            direction="column"
+            alignItems="center"
+            justifyContent="space-between"
+            sx={{ height: "100%" }}
+            spacing={3}
+          >
+            <Stack alignItems={"center"} spacing={4}>
+              <Box
+                sx={{
+                  backgroundColor: theme.palette.primary.paper,
+                  height: 64,
+                  width: 64,
+                  borderRadius: 1.5,
+                }}
+              >
+                <img src={Logo} alt={"Chat App Logo"} />
+              </Box>
+              <Stack
+                sx={{ width: "max-content" }}
+                direction="column"
+                alignItems="center"
+                spacing={3}
+              >
+                {Nav_Buttons.map((el) =>
+                  el.index === selected ? (
+                    <Box
+                      p={1}
+                      sx={{
+                        backgroundColor: theme.palette.primary.main,
+                        borderRadius: 1.5,
+                      }}
+                    >
+                      <IconButton
+                        sx={{ width: "max-content", color: "#fff" }}
+                        key={el.index}
+                      >
+                        {el.icon}
+                      </IconButton>
+                    </Box>
+                  ) : (
+                    <Box
+                      p={1}
+                      sx={{
+                        // backgroundColor: theme.palette.primary.main,
+                        borderRadius: 1.5,
+                      }}
+                    >
+                      <IconButton
+                        onClick={() => {
+                          setSelected(el.index);
+                        }}
+                        sx={{ width: "max-content" }}
+                        key={el.index}
+                      >
+                        {el.icon}
+                      </IconButton>
+                    </Box>
+                  )
+                )}
+                <Divider orientation="horizontal" sx={{ width: 52 }} />
+                {selected === 3 ? (
                   <Box
                     p={1}
                     sx={{
@@ -100,70 +137,35 @@ const DashboardLayout = () => {
                       borderRadius: 1.5,
                     }}
                   >
-                    <IconButton
-                      sx={{ width: "max-content", color: "#fff" }}
-                      key={el.index}
-                    >
-                      {el.icon}
+                    {" "}
+                    <IconButton sx={{ width: "max-content", color: "#fff" }}>
+                      <Gear />
                     </IconButton>
                   </Box>
                 ) : (
-                  <Box
-                    p={1}
-                    sx={{
-                      // backgroundColor: theme.palette.primary.main,
-                      borderRadius: 1.5,
+                  <IconButton
+                    onClick={() => {
+                      setSelected(3);
                     }}
                   >
-                    <IconButton
-                      onClick={() => {
-                        setSelected(el.index);
-                      }}
-                      sx={{ width: "max-content" }}
-                      key={el.index}
-                    >
-                      {el.icon}
-                    </IconButton>
-                  </Box>
-                )
-              )}
-              <Divider orientation="horizontal" sx={{ width: 52 }} />
-              {selected === 3 ? (
-                <Box
-                  p={1}
-                  sx={{
-                    backgroundColor: theme.palette.primary.main,
-                    borderRadius: 1.5,
-                  }}
-                >
-                  {" "}
-                  <IconButton sx={{ width: "max-content", color: "#fff" }}>
                     <Gear />
                   </IconButton>
-                </Box>
-              ) : (
-                <IconButton
-                  onClick={() => {
-                    setSelected(3);
-                  }}
-                >
-                  <Gear />
-                </IconButton>
-              )}
+                )}
+              </Stack>
+            </Stack>
+            <Stack spacing={3}>
+              <AntSwitch
+                onChange={() => {
+                  onToggleMode();
+                }}
+                defaultChecked
+              ></AntSwitch>
+              <Avatar src={faker.image.avatar()} />
             </Stack>
           </Stack>
-          <Stack spacing={3}>
-            <AntSwitch
-              onChange={() => {
-                onToggleMode();
-              }}
-              defaultChecked
-            ></AntSwitch>
-            <Avatar src={faker.image.avatar()} />
-          </Stack>
-        </Stack>
-      </Box>
-      <Outlet />
+        </Box>
+        <Outlet />
+      </Stack>
     </>
   );
 };
