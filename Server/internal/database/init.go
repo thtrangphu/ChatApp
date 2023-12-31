@@ -14,6 +14,7 @@ func InitializeDatabase() {
 	if err != nil {
 		panic("Failed to load sqlite database")
 	}
-	db.AutoMigrate(&model.User{}, &model.Chat{}, &model.Room{}) // Loading the model
+	db.AutoMigrate(&model.User{}, &model.Chat{}) // Loading the model
+	db.AutoMigrate(&model.Room{})
 	DB = db
 }

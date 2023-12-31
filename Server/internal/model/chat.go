@@ -14,7 +14,7 @@ type Chat struct {
 	gorm.Model
 	RoomID  uint
 	UserID  uint
-	From    User
+	User    User
 	Content string
 	Type    ChatType
 }
