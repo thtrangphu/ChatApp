@@ -15,6 +15,7 @@ type Chat struct {
 	RoomID  uint
 	UserID  uint
 	User    User
+	Room    Room
 	Content string
 	Type    ChatType
 }
