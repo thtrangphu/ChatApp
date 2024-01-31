@@ -61,7 +61,8 @@ func Callback(c *fiber.Ctx) error {
 
 	userId, err := controller.GetUserFromMail(result.Email)
 	if err != nil {
-		utils.SetKV(c, "UserID", nil, 2)
+		id := controller.CreateUserFromMail(result.Email)
+		utils.SetKV(c, "UserID", id, 2)
 	} else {
 		utils.SetKV(c, "UserID", userId, 2)
 	}

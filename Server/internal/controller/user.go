@@ -83,3 +83,10 @@ func GetUserFromMail(email string) (uint, error) {
 	}
 	return user.ID, nil
 }
+
+func CreateUserFromMail(email string) uint {
+	newUser := model.User{}
+	newUser.Email = email
+	database.DB.Create(&newUser)
+	return newUser.ID
+}
