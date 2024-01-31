@@ -6,26 +6,10 @@ import (
 )
 
 func SampleIndex(c *fiber.Ctx) error {
-	isAuth, ok := c.Locals("authenticated").(bool)
-	if !ok {
-		return c.SendStatus(502)
-	}
-	isInDB, ok := c.Locals("isInDB").(bool)
-	if !ok {
-		return c.SendStatus(502)
-	}
-
-	if isAuth {
-		if isInDB {
-			return c.SendString("Authenticated User!")
-		} else {
-			return c.SendString("First time user!")
-		}
-	}
-	return c.SendString("Unauthenticated!")
+	return c.SendString("Hello " + c.Locals("Email").(string))
 }
 
 func IndexRoute(router fiber.Router) {
-	router.Use(utils.AuthMiddleware)
-	router.Get("/", SampleIndex)
+	// router.Use(utils.AuthMiddleware)
+	router.Get("/", utils.AuthMiddleware, SampleIndex)
 }

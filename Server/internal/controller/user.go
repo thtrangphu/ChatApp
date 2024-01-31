@@ -76,10 +76,10 @@ func DeleteUser(c *fiber.Ctx) error {
 }
 
 // --------------------------------------------------------------
-func CheckUserInDB(email string) bool {
-
-	if err := database.DB.First(&model.User{}, model.User{Email: email}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
-		return false
+func GetUserFromMail(email string) (uint, error) {
+	user := model.User{}
+	if err := database.DB.First(&user, model.User{Email: email}).Error; errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, err
 	}
-	return true
+	return user.ID, nil
 }

@@ -59,9 +59,13 @@ func Callback(c *fiber.Ctx) error {
 		return c.SendStatus(502)
 	}
 
-	if controller.CheckUserInDB(result.Email) {
-		utils.SetKV(c, "IsInDB", "true", 2)
+	userId, err := controller.GetUserFromMail(result.Email)
+	if err != nil {
+		utils.SetKV(c, "UserID", nil, 2)
+	} else {
+		utils.SetKV(c, "UserID", userId, 2)
 	}
+
 	return c.Redirect("/")
 }
 
