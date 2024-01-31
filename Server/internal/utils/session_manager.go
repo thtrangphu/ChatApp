@@ -11,27 +11,27 @@ var serverStore = session.New(session.Config{
 	Expiration: 12 * time.Hour, // Session expires after 12 hours
 })
 
-func SetID(ctx *fiber.Ctx, id string) error {
+func SetKV(ctx *fiber.Ctx, key string, value string, expiryHour time.Duration) error {
 	sess, err := serverStore.Get(ctx)
 	if err != nil {
 		return err
 	}
 
-	sess.Set("ID", id)
-	sess.SetExpiry(4 * time.Hour)
+	sess.Set(key, value)
+	sess.SetExpiry(expiryHour * time.Hour)
 	if err = sess.Save(); err != nil {
 		return err
 	}
 	return nil
 }
 
-func GetId(ctx *fiber.Ctx) (string, error) {
+func GetKV(ctx *fiber.Ctx, key string) (string, error) {
 	sess, err := serverStore.Get(ctx)
 	if err != nil {
 		return "", err
 	}
 
-	id, ok := sess.Get("ID").(string)
+	id, ok := sess.Get(key).(string)
 	if !ok {
 		return "", nil
 	}
@@ -48,12 +48,19 @@ func DestroySession(ctx *fiber.Ctx) error {
 }
 
 func AuthMiddleware(ctx *fiber.Ctx) error {
-	id, err := GetId(ctx)
+	id, err := GetKV(ctx, "Email")
 	if err != nil {
 		ctx.Locals("authenticated", false)
 		return ctx.Next()
 	}
 
+	isInDB, err := GetKV(ctx, "IsInDB")
+	if err != nil {
+		ctx.Locals("IsInDB", false)
+		return ctx.Next()
+	}
+
+	ctx.Locals("isInDB", isInDB != "")
 	ctx.Locals("authenticated", id != "")
 	return ctx.Next() //  TODO: use database to validate
 }

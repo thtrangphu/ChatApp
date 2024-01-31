@@ -10,9 +10,17 @@ func SampleIndex(c *fiber.Ctx) error {
 	if !ok {
 		return c.SendStatus(502)
 	}
+	isInDB, ok := c.Locals("isInDB").(bool)
+	if !ok {
+		return c.SendStatus(502)
+	}
 
 	if isAuth {
-		return c.SendString("Authenticated User!")
+		if isInDB {
+			return c.SendString("Authenticated User!")
+		} else {
+			return c.SendString("First time user!")
+		}
 	}
 	return c.SendString("Unauthenticated!")
 }

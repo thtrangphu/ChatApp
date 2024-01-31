@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/mekanican/chat-backend/internal/controller"
 	"github.com/mekanican/chat-backend/internal/oauth"
 	"github.com/mekanican/chat-backend/internal/utils"
 )
@@ -53,9 +54,13 @@ func Callback(c *fiber.Ctx) error {
 	// 	return c.SendStatus(502)
 	// }
 
-	err = utils.SetID(c, result.Id)
+	err = utils.SetKV(c, "Email", result.Email, 2)
 	if err != nil {
 		return c.SendStatus(502)
+	}
+
+	if controller.CheckUserInDB(result.Email) {
+		utils.SetKV(c, "IsInDB", "true", 2)
 	}
 	return c.Redirect("/")
 }
