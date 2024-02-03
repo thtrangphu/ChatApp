@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Chat</title>
+</head>
+<body>
+  <h1>Chat</h1>
+  <div id="messages"></div>
+  <form id="message-form" style="display: none;">
+    <input type="text" id="message" placeholder="Write your message">
+    <button type="submit">Send</button>
+  </form>
+  <script>
+
+    async function GetToken() {
+      const mess = await fetch("/api/v1/centrifugo/token-n");
+      const data = await mess.json();
+      return data.token;
+    }
+
+    async function GetToken2() {
+      const mess = await fetch("/api/v1/centrifugo/token-z");
+      const data = await mess.json();
+      return data.token;
+    }
+    // Function to display received messages
+    function displayMessage(message) {
+      const messageElement = document.createElement("p");
+      messageElement.textContent = `${message.sender}: ${message.message}`;
+      document.getElementById("messages").appendChild(messageElement);
+    }
+
+    async function main() {
+      // Prompt for API key
+      // const apiKey = prompt("Please enter your Centrifugo API key:");
+      const apiKey = await GetToken();
+      const apiKey2 = await GetToken2();
+      const u = prompt("Name?")
+
+      // Only load Centrifugo code and proceed if API key is provided
+      if (apiKey) {
+        const script = document.createElement("script");
+        script.src = "https://unpkg.com/centrifuge@5.0.1/dist/centrifuge.js";
+        document.head.appendChild(script);
+        script.onload = () => {
+          // Centrifugo code here (using the provided API key)
+        
+          // Replace with your Centrifugo server address
+          const centrifuge = new Centrifuge("ws://localhost:9000/connection/websocket", {
+            token: apiKey
+          });
+
+
+          // Subscribe to the chat channel
+          const chatChannel = centrifuge.newSubscription("chat", {
+            token: apiKey2
+          });
+          
+          // Handle received messages
+          chatChannel.on("publication", (message) => {
+            console.log(message.data);
+            displayMessage(message.data);
+          }).subscribe();
+
+          // Connect to Centrifugo server
+          centrifuge.connect()
+
+          // Show the message form after successful connection
+          document.getElementById("message-form").style.display = "block";
+
+          // Submit message form
+          const messageForm = document.getElementById("message-form");
+          messageForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+            const message = document.getElementById("message").value;
+            
+            // Publish message to the chat channel (server-side implementation needed)
+            chatChannel.publish({
+              //data: {
+                sender: "anonymous " + u, // Replace with user information
+                message: message
+              //}
+            });
+            
+            document.getElementById("message").value = "";
+          });
+
+        };
+      } else {
+        alert("API key is required to connect to Centrifugo.");
+      }
+    }
+    main()
+  </script>
+</body>
+</html>
+

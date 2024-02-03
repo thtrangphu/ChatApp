@@ -71,6 +71,10 @@ func main() {
 		{
 			user.Route("/", route.UserRoute)
 		}
+		centrifugo := v1.Group("/centrifugo")
+		{
+			centrifugo.Route("/", route.CentrifugoRoute)
+		}
 	}
 
 	auth := app.Group("/auth")

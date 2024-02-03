@@ -6,10 +6,11 @@ import (
 )
 
 func SampleIndex(c *fiber.Ctx) error {
-	return c.SendString("Hello " + c.Locals("Email").(string))
+	return c.SendFile("./samplechat/index.html")
+	// return c.SendString("Hello " + c.Locals("Email").(string))
 }
 
 func IndexRoute(router fiber.Router) {
 	// router.Use(utils.AuthMiddleware)
-	router.Get("/", utils.AuthMiddleware, SampleIndex)
+	router.Get("/", utils.AuthMiddleware, utils.CheckUserMiddleware, SampleIndex)
 }
