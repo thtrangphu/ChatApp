@@ -25,6 +25,29 @@
       const data = await mess.json();
       return data.token;
     }
+    
+    async function GetRoomName() {
+      const mess = await fetch("/api/v1/chat/getroom");
+      const data = await mess.json();
+      return data.room;
+    }
+
+    async function postData(url, data) {
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        console.log('Data sent successfully:', responseData);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
     // Function to display received messages
     function displayMessage(message) {
       const messageElement = document.createElement("p");
@@ -37,7 +60,8 @@
       // const apiKey = prompt("Please enter your Centrifugo API key:");
       const apiKey = await GetToken();
       const apiKey2 = await GetToken2();
-      const u = prompt("Name?")
+      const room = await GetRoomName();
+      // const u = prompt("Name?")
 
       // Only load Centrifugo code and proceed if API key is provided
       if (apiKey) {
@@ -54,7 +78,7 @@
 
 
           // Subscribe to the chat channel
-          const chatChannel = centrifuge.newSubscription("chat", {
+          const chatChannel = centrifuge.newSubscription("sample-chat", {
             token: apiKey2
           });
           
@@ -72,17 +96,18 @@
 
           // Submit message form
           const messageForm = document.getElementById("message-form");
-          messageForm.addEventListener("submit", (event) => {
+          messageForm.addEventListener("submit", async (event) => {
             event.preventDefault();
             const message = document.getElementById("message").value;
+            await postData("/api/v1/chat", { message: message })
             
             // Publish message to the chat channel (server-side implementation needed)
-            chatChannel.publish({
-              //data: {
-                sender: "anonymous " + u, // Replace with user information
-                message: message
-              //}
-            });
+            // chatChannel.publish({
+            //   //data: {
+            //     sender: "anonymous " + u, // Replace with user information
+            //     message: message
+            //   //}
+            // });
             
             document.getElementById("message").value = "";
           });

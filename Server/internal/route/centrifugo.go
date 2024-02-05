@@ -18,7 +18,7 @@ func AuthNToken(ctx *fiber.Ctx) error {
 
 func AuthZToken(ctx *fiber.Ctx) error {
 	val := ctx.Locals("UserID").(uint)
-	tok, err := utils.GenerateRoomJWT(strconv.Itoa(int(val)), "chat", 1)
+	tok, err := utils.GenerateRoomJWT(strconv.Itoa(int(val)), "sample-chat", 1)
 	if err != nil {
 		return utils.ResponseError(ctx, err.Error())
 	}

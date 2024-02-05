@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/encryptcookie"
 	"github.com/gofiber/swagger"
+	"github.com/mekanican/chat-backend/apiproto"
 	_ "github.com/mekanican/chat-backend/docs"
 	"github.com/mekanican/chat-backend/internal/config"
 	"github.com/mekanican/chat-backend/internal/database"
@@ -51,6 +52,9 @@ func getHelloId(c *fiber.Ctx) error {
 func main() {
 	config.Loader(".env")
 	database.InitializeDatabase()
+	if err := apiproto.Initialize(); err != nil {
+		panic(err)
+	}
 	app := fiber.New()
 
 	app.Use(encryptcookie.New(encryptcookie.Config{
@@ -74,6 +78,10 @@ func main() {
 		centrifugo := v1.Group("/centrifugo")
 		{
 			centrifugo.Route("/", route.CentrifugoRoute)
+		}
+		chat := v1.Group("/chat")
+		{
+			chat.Route("/", route.ChatRoute)
 		}
 	}
 

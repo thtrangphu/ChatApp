@@ -5,5 +5,7 @@
   "admin_secret": "4e9eafcf-0120-4ddd-b668-8dc40072c78e",
   "api_key": "d7627bb6-2292-4911-82e1-615c0ed3eebb",
   "allowed_origins": ["http://localhost:8000"],
-  "allow_subscribe_for_client": true
+  "allow_subscribe_for_client": true,
+  "grpc_api": true,
+  "grpc_api_key": "396d8d33-c690-4acd-92f7-efa93d25b4d4"
 }
